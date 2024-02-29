@@ -28,7 +28,7 @@ def get_all_transaction_hashes():
     # 获取最新区块号
     latest_block_number = web3.eth.block_number
     print("Latest block number:", latest_block_number)
-
+    tx_hashs =[]
     # 遍历每个区块
     for block_number in range(latest_block_number + 1):
         # 获取区块
@@ -37,6 +37,10 @@ def get_all_transaction_hashes():
         # 获取区块中的交易哈希值
         for tx_hash in block.transactions:
             print("Transaction Hash:", tx_hash.hex())
+            tx_hashs.append(tx_hash.hex())
+    
+    return tx_hashs
+
 
 def get_transaction_receipt(tx_hash):
     # 获取交易收据
@@ -76,16 +80,17 @@ web3 = Web3(Web3.HTTPProvider('http://192.168.1.114:8545'))
 if web3.is_connected():
     print('blockchin netowork is connected!')
     get_all_contracts()
-    get_all_transaction_hashes()
-    receipt = get_transaction_receipt('0xe0167a4eefaec11f27e6047a02050710bd76940c14e5c4bad1ca128bbf8acbd1')
-    if receipt:
-        print("Transaction Receipt:")
-        print("Status:", receipt['status'])
-        print("Gas Used:", receipt['gasUsed'])
-        print("Contract Address:", receipt['contractAddress'])  # 如果是合约创建交易，会有合约地址
-        print("Logs:", receipt['logs'])
-    else:
-        print("Transaction receipt not found.")
+    tx_hashs = get_all_transaction_hashes()
+    for tx_hash in tx_hashs:
+        receipt = get_transaction_receipt(tx_hash)
+        if receipt:
+            print("Transaction Receipt:")
+            print("Status:", receipt['status'])
+            print("Gas Used:", receipt['gasUsed'])
+            print("Contract Address:", receipt['contractAddress'])  # 如果是合约创建交易，会有合约地址
+            print("Logs:", receipt['logs'])
+        else:
+            print("Transaction receipt not found.")
 
     # 打印区块链上的所有用户钱包地址
     wallet_addresses = get_all_wallet_addresses()
