@@ -1,5 +1,6 @@
 from web3 import Web3
 import json
+import time
 
 #取得所有的區塊鏈上智能合約位置
 def get_all_contracts():
@@ -74,6 +75,28 @@ def get_all_wallet_addresses():
 
     return addresses
 
+# 获取区块链的 TPS
+def get_blockchain_tps(interval=10):
+    start_block_number = web3.eth.block_number
+
+    while True:
+        start_time = time.time()
+        start_block = web3.eth.block_number
+
+        # 等待一段时间
+        time.sleep(interval)
+
+        end_time = time.time()
+        end_block = web3.eth.block_number
+
+        # 计算 TPS
+        block_count = end_block - start_block
+        elapsed_time = end_time - start_time
+        tps = block_count / elapsed_time if elapsed_time > 0 else 0
+
+        print("TPS for last {} seconds: {:.2f}".format(interval, tps))
+
+
 # Prive Chain web3 instance
 web3 = Web3(Web3.HTTPProvider('http://192.168.1.114:8545'))
 
@@ -97,6 +120,8 @@ if web3.is_connected():
     print("All Wallet Addresses:")
     for address in wallet_addresses:
         print(address)
+
+    get_blockchain_tps()
 else:
     print('blockchin netowork is not found!')
 
