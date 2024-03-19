@@ -97,8 +97,16 @@ def get_blockchain_tps(interval=10):
         print("TPS for last {} seconds: {:.2f}".format(interval, tps))
 
 
-# Prive Chain web3 instance
-web3 = Web3(Web3.HTTPProvider('http://192.168.1.114:8545'))
+with open('IP.txt', 'r') as file:
+    # 读取每一行并存储在一个列表中
+    lines = file.readlines()
+
+for line in lines:
+    print(line.strip()) 
+    # Prive Chain web3 instance
+    web3 = Web3(Web3.HTTPProvider('http://'+line.strip()+':8545'))
+
+
 
 if web3.is_connected():
     print('blockchin netowork is connected!')
