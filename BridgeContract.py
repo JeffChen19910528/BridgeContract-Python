@@ -115,11 +115,13 @@ if web3.is_connected():
     for tx_hash in tx_hashs:
         receipt = get_transaction_receipt(tx_hash)
         if receipt:
+            print(tx_hash+":")
             print("Transaction Receipt:")
             print("Status:", receipt['status'])
             print("Gas Used:", receipt['gasUsed'])
             print("Contract Address:", receipt['contractAddress'])  # 如果是合约创建交易，会有合约地址
             print("Logs:", receipt['logs'])
+            print("")
         else:
             print("Transaction receipt not found.")
 
@@ -129,7 +131,7 @@ if web3.is_connected():
     for address in wallet_addresses:
         print(address)
 
-    get_blockchain_tps()
+    #get_blockchain_tps()
 else:
     print('blockchin netowork is not found!')
 
