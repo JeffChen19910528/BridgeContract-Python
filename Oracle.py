@@ -1,7 +1,15 @@
 from web3 import Web3
 
 # 連接到私有區塊鏈節點
-infura_url = "http://192.168.1.111:8545" # 更改為您的私有節點URL
+with open('IP.txt', 'r') as file:
+    # 读取每一行并存储在一个列表中
+    lines = file.readlines()
+
+for line in lines:
+    print(line.strip()) 
+    # Prive Chain web3 instance
+    infura_url = "http://"+line.strip()+":8545" # 更改為您的私有節點URL
+
 web3 = Web3(Web3.HTTPProvider(infura_url))
 
 # 獲取最新區塊號碼

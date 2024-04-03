@@ -2,6 +2,7 @@ import solcx
 from solcx import compile_standard
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
+import json
 
 # 安装solc并设置版本
 solcx.install_solc(version='0.8.25')
@@ -51,6 +52,17 @@ SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 # 设置默认账户
 w3.eth.default_account = w3.eth.accounts[0]  # 替换为你的账户地址
 w3.geth.personal.unlock_account(w3.eth.accounts[0], '123456')
+
+# 保存 ABI 到文件
+abi_file_name = "SimpleStorage_abi.json"
+with open(abi_file_name, "w") as abi_file:
+    json.dump(abi, abi_file)
+
+print("ABI saved to:", abi_file_name)
+
+# 打印 ABI
+print("ABI:")
+print(json.dumps(abi, indent=4))
 
 # 部署合约
 tx_hash = SimpleStorage.constructor().transact({'from': w3.eth.default_account, 'gas': 2000000})
