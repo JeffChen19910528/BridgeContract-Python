@@ -17,6 +17,30 @@ web3 = Web3(Web3.HTTPProvider(infura_url))
 latest_block = web3.eth.get_block('latest')
 print(f"Latest block number: {latest_block.number}")
 
+
+#取得所有的區塊鏈上智能合約位置
+def get_all_contracts():
+    # 获取最新区块号
+    latest_block_number = web3.eth.block_number
+    print("Latest block number:", latest_block_number)
+
+    # 遍历每个区块
+    for block_number in range(latest_block_number + 1):
+        # 获取区块
+        block = web3.eth.get_block(block_number)
+
+        # 检查区块中的每笔交易
+        for tx_hash in block.transactions:
+            # 获取交易详情
+            tx = web3.eth.get_transaction(tx_hash)
+
+            # 检查交易是否为合约创建交易
+            if tx.to is None and tx.input:
+                # 获取合约地址
+                contract_address = web3.eth.get_transaction_receipt(tx_hash).contractAddress
+                print("Contract created at block {}, address: {}".format(block_number, contract_address))
+
+
 # 遍歷所有區塊並獲取交易和挖礦詳細信息
 deployed_contracts = []
 for block_number in range(latest_block.number, 0, -1):
@@ -30,20 +54,24 @@ for block_number in range(latest_block.number, 0, -1):
         print(f"      To: {tx['to']}")
         print(f"      Value: {web3.from_wei(tx['value'], 'ether')} ETH")
         
-        # 檢查是否為合約部署交易
-        if tx['to'] is None:
-            deployed_contracts.append(tx['contractAddress'])
+       # 檢查是否為合約部署交易
+        if isinstance(tx, dict) and 'contractAddress' in tx:
+             deployed_contract_address = tx['contractAddress']
+             deployed_contracts.append(deployed_contract_address)
+             print(f" Deployed contract address: {deployed_contract_address}")
             
-            # 獲取合約的交易日誌記錄
-            receipt = web3.eth.get_transaction_receipt(tx.hash)
-            for log in receipt.logs:
-                print(f"      Log: {log}")
+        # 獲取合約的交易日誌記錄
+        receipt = web3.eth.get_transaction_receipt(tx.hash)
+        for log in receipt.logs:
+            print(f"      Log: {log}")
 
 # 獲取所有帳戶地址和餘額
 accounts = web3.eth.accounts
 for account in accounts:
     balance = web3.eth.get_balance(account)
     print(f"Account {account}: {web3.from_wei(balance, 'ether')} ETH")
+
+get_all_contracts()
 
 # 獲取初始帳號地址列表
 initial_accounts = web3.eth.accounts
@@ -65,9 +93,11 @@ while True:
             print(f" To: {tx['to']}")
             print(f" Value: {web3.from_wei(tx['value'], 'ether')} ETH")
 
-            # 檢查是否為合約部署交易
-            if tx['to'] is None:
-                deployed_contracts.append(tx['contractAddress'])
+             # 檢查是否為合約部署交易
+            if isinstance(tx, dict) and 'contractAddress' in tx:
+                deployed_contract_address = tx['contractAddress']
+                deployed_contracts.append(deployed_contract_address)
+                print(f" Deployed contract address: {deployed_contract_address}")
 
             # 獲取合約的交易日誌記錄
             receipt = web3.eth.get_transaction_receipt(tx.hash)
