@@ -93,11 +93,11 @@ while True:
             print(f" To: {tx['to']}")
             print(f" Value: {web3.from_wei(tx['value'], 'ether')} ETH")
 
-             # 檢查是否為合約部署交易
-            if isinstance(tx, dict) and 'contractAddress' in tx:
-                deployed_contract_address = tx['contractAddress']
-                deployed_contracts.append(deployed_contract_address)
-                print(f" Deployed contract address: {deployed_contract_address}")
+            # 检查交易是否为合约创建交易
+            if tx.to is None and tx.input:
+                # 获取合约地址
+                contract_address = web3.eth.get_transaction_receipt(tx.hash).contractAddress
+                print("Contract created at block {}, address: {}".format(block_number, contract_address))
 
             # 獲取合約的交易日誌記錄
             receipt = web3.eth.get_transaction_receipt(tx.hash)
